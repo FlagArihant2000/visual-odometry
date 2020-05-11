@@ -157,9 +157,8 @@ while(1):
 # Essential matrix calculation
 E, mask = cv2.findEssentialMat(kp1, kp0, K, method = cv2.RANSAC, prob = 0.999, threshold = 0.4, mask = None)
 if OutlierRejection:
-	indx = np.where(mask == 1)
-	kp0 = kp0[indx[0]]
-	kp1 = kp1[indx[0]]
+	kp0 = kp0[mask.ravel() ==1]
+	kp1 = kp1[mask.ravel() ==1]
 
 # Pose recovery	
 _, R0, t0, mask = cv2.recoverPose(E, kp0, kp1, K)
