@@ -12,9 +12,7 @@ The project aims at understanding the working of visual odometry. An odometer is
 6. Input the third image and track the features from the second image using KLT feature tracking algorithm.
 7. Repeat step 3 to 5. 
 8. To obtain the scale factor, acquire the point clouds from the current and the previous iteration and the distance between the two 3D point correspondences are calculated, followed by taking the median of all the distances obtained. 
-9. Update the parameters as,
-[img]http://www.sciweavers.org/tex2img.php?eq=t%20%3D%20t%20%2B%20scale%20%2A%20R.dot%28t_%7Bcurr%7D%29%0A&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0[/img]
-[img]http://www.sciweavers.org/tex2img.php?eq=R%20%3D%20R_%7Bcurr%7D.dot%28R%29%0A&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0[/img]
+9. Update the parameters accordingly. 
 10. Plot the updated final translation component (x and z component).
 11. Repeat step 6 to 10 till the video sequence is exhausted.
 
