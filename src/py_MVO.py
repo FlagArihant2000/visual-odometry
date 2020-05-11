@@ -189,6 +189,7 @@ class VisualOdometry:
     def detectNewFeatures(self, cur_img):
         """Detects new features in the current frame.
         Uses the Feature Detector selected."""
+        print(self.detector)
         if self.detector == 'SHI-TOMASI':
             feature_pts = cv2.goodFeaturesToTrack(cur_img, **feature_params)
             feature_pts = np.array([x for x in feature_pts], dtype=np.float32).reshape((-1, 2))
@@ -203,6 +204,8 @@ class VisualOdometry:
         in order to provide them to the Kanade-Lucas-Tomasi Tracker"""
 
         self.px_ref = self.detectNewFeatures(self.new_frame)
+        #print(len(self.px_ref))
+
         self.T_vectors.append(tuple([[0], [0], [0]]))
         self.R_matrices.append(tuple(np.zeros((3, 3))))
         self.frame_stage = STAGE_SECOND_FRAME
@@ -216,6 +219,7 @@ class VisualOdometry:
         prev_img, cur_img = self.last_frame, self.new_frame
         # Obtain feature correspondence points
         self.px_ref, self.px_cur, _diff = OF.KLT_featureTracking(prev_img, cur_img, self.px_ref)
+        print(_diff)
         # Estimate the essential matrix
         E, mask = cv2.findEssentialMat(self.px_cur, self.px_ref, self.K, method=cv2.RANSAC, prob=0.999, threshold=1.0)
         # Estimate Rotation and translation vectors
@@ -245,6 +249,7 @@ class VisualOdometry:
         self.px_ref, self.px_cur, px_diff = OF.KLT_featureTracking(prev_img, cur_img, self.px_ref)
         # Verify if the current frame is going to be skipped
         self.skip_frame = self.frame_Skip(px_diff)
+        print(px_diff)
         if self.skip_frame:
             if self.px_ref.shape[0] < kMinNumFeature:  # Verify if features on last_frame are sparse
                 self.px_cur = self.detectNewFeatures(prev_img)

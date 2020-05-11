@@ -18,7 +18,7 @@ import time
 ImgLoc = '/home/arihant/visod/src/KITTI_sample/images/' # Images Location
 GTLoc = '/home/arihant/visod/src/KITTI_sample/poses.txt' # Ground truth location file. Write None if you don't have it.
 totImages = 151
-FeatureDetect = 'SIFT' # FEATURE DETECTION METHOD ('FAST', 'SIFT', 'SURF', 'SHI-TOMASI')
+FeatureDetect = 'FAST' # FEATURE DETECTION METHOD ('FAST', 'SIFT', 'SURF', 'SHI-TOMASI')
 lk_params = dict(winSize=(21, 21), maxLevel=3, criteria=(cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 30, 0.01)) # Lucas Kanade Parameters for Optical Flow
 matchDiff = 1 # Minimum distance in KLT point correspondence
 pixDiffThresh = 3 # Skip frame if pixel difference returned from KLT is less than the threshold.
@@ -44,26 +44,42 @@ def FeatureDetection(img0gray, FeatureDetect):
 		kp0 = np.array([kp0[idx].pt for idx in range(len(kp0))], dtype = np.float32)		
 	return kp0
 
-def FeatureTracking(img0, img1, reference):
-	kp1, st, err = cv2.calcOpticalFlowPyrLK(img0, img1, reference, None, **lk_params)
-	kp0, st, err = cv2.calcOpticalFlowPyrLK(img1, img0, kp1, None, **lk_params) # Backtracking to acquire good features
-	
-	d = abs(reference - kp0).reshape(-1, 2).max(-1) # Difference between feature points
-	good = d < matchDiff
-	if list(good).count(True) <= 5:
-		return kp0, kp1, 0
-	
-	n_kp0 = []
-	n_kp1 = []
-	for i, good_flag in enumerate(good):
-		if good_flag:
-			n_kp0.append(kp0[i])
-			n_kp1.append(kp1[i])
-	n_kp0 = np.array(n_kp0, dtype = np.float32)
-	n_kp1 = np.array(n_kp1, dtype = np.float32)
-	diff = np.mean(abs(n_kp0 - n_kp1).reshape(-1, 2).max(-1))
-	
-	return kp0, kp1, diff
+def FeatureTracking(image_ref, image_cur, px_ref):
+
+
+    # Feature Correspondence with Backtracking Check
+    kp2, st, err = cv2.calcOpticalFlowPyrLK(image_ref, image_cur, px_ref, None, **lk_params)
+    kp1, st, err = cv2.calcOpticalFlowPyrLK(image_cur, image_ref, kp2, None, **lk_params)
+
+    d = abs(px_ref - kp1).reshape(-1, 2).max(-1)  # Verify the absolute difference between feature points
+    good = d < matchDiff  # Verify which features produced good results by the difference being less
+                               # than the fMATCHING_DIFF threshold.
+    # Error Management
+    if len(d) == 0:
+        print('Error: No matches where made.')
+    elif list(good).count(True) <= 5:  # If less than 5 good points, it uses the features obtain without the backtracking check
+        print('Warning: No match was good. Returns the list without good point correspondence.')
+        return kp1, kp2, 0
+
+    # Create new lists with the good features
+    n_kp1, n_kp2 = [], []
+    for i, good_flag in enumerate(good):
+        if good_flag:
+            n_kp1.append(kp1[i])
+            n_kp2.append(kp2[i])
+
+    # Format the features into float32 numpy arrays
+    n_kp1, n_kp2 = np.array(n_kp1, dtype=np.float32), np.array(n_kp2, dtype=np.float32)
+
+    # Verify if the point correspondence points are in the same
+    # pixel coordinates. If true the car is stopped (theoretically)
+    d = abs(n_kp1 - n_kp2).reshape(-1, 2).max(-1)
+
+    # The mean of the differences is used to determine the amount
+    # of distance between the pixels
+    diff_mean = np.mean(d)
+
+    return n_kp1, n_kp2, diff_mean
 	
 def Triangulation(R, t, kp0, kp1, K):
 	P0 = np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0]])
@@ -107,7 +123,7 @@ def RelativeScale(last_cloud, new_cloud):
 	
 t = []
 R = []
-
+clahe = cv2.createCLAHE(clipLimit=5.0)
 # Plotting values for absolute scale
 t.append(tuple([[0], [0], [0]]))
 R.append(tuple(np.zeros((3,3))))
@@ -121,15 +137,17 @@ if GTLoc is not None:
 while(1):
 	img0 = cv2.imread(ImgLoc+str(i)+'.png') # First frame acquisition
 	img0gray = cv2.cvtColor(img0, cv2.COLOR_BGR2GRAY)
-
+	img0gray = clahe.apply(img0gray)
 	# FEATURE DETECTION
-	kp0 = FeatureDetection(img0gray, FeatureDetect)	
+	kp0 = FeatureDetection(img0gray, FeatureDetect)
+	print(len(kp0))	
 	
 	img1 = cv2.imread(ImgLoc+str(i+1)+'.png') # Second frame acquisition
 	img1gray = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
-
+	img1gray = clahe.apply(img1gray)
 	# FEATURE TRACKING
 	kp0, kp1, diff = FeatureTracking(img0gray, img1gray, kp0)
+	print(diff)
 	if diff < pixDiffThresh: # If pixel difference is not sufficient (almost no motion)
 		i = i + 1
 	else:
@@ -164,6 +182,7 @@ while(i <= 151):
 	
 	img1 = cv2.imread(ImgLoc+str(i)+'.png') # Image acquisition
 	img1gray = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
+	img1gray = clahe.apply(img1gray)
 	
 	# Feature tracking
 	kp0, kp1, diff = FeatureTracking(img0gray, img1gray, kp0)

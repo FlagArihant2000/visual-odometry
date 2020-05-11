@@ -123,7 +123,7 @@ def run():
             if window_flag == 'WINDOW_YES':
                 if img_id > 0:  # Set the points for the real-time trajectory window
                     x, y, z = cur_t[0], cur_t[1], cur_t[2]
-                    #TT.drawOpticalFlowField(imgKLT, vo.OFF_prev, vo.OFF_cur)  # Draw the features that were matched
+                    TT.drawOpticalFlowField(imgKLT, vo.OFF_prev, vo.OFF_cur)  # Draw the features that were matched
                 else:
                     x, y, z = 0., 0., 0.
 
@@ -131,9 +131,9 @@ def run():
             # -------------------------------------
         sleep(0.1) # Sleep for progress bar update
         img_id += 1  # Increasing the image id
-        TT.printProgress(i, len(images)-1, prefix='Progress:', suffix='Complete', barLength=50)  # update progress bar
+        #TT.printProgress(i, len(images)-1, prefix='Progress:', suffix='Complete', barLength=50)  # update progress bar
         Tf = time.time()
-        print(1 / (Tf - Tin))
+        #print(1 / (Tf - Tin))
     # --------------------------------------------------------------------------------
 
     # Write poses to text file in the images sequences directory
