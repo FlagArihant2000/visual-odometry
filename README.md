@@ -11,7 +11,4 @@ Clone the repository on your Desktop. Make sure to change the directory path in 
 
 1. Arihant Gaur
 2. Saurabh Kemekar
-
-### MENTOR:
-
-1. Aman Jain
+3. Aman Jain
