@@ -37,7 +37,7 @@ import Ground_Truth as GT
 import Trajectory_Tools as TT
 from Common_Modules import *
 from py_MVO import VisualOdometry
-
+import time
 
 def run():
 
@@ -92,7 +92,8 @@ def run():
     #images = ['/home/arihant/Desktop/KITTI KIT Germany/visual_odometry-master/Images/'+str(6*i+1)+'.png' for i in range(92)]
 
     for i, img_path in enumerate(images):  # Iterating through all images
-        #print(img_path)
+        Tin = time.time()
+        print(img_path)
         k = cv2.waitKey(10) & 0xFF
         if k == 27:  # Wait for ESC key to exit
             cv2.destroyAllWindows()
@@ -122,7 +123,7 @@ def run():
             if window_flag == 'WINDOW_YES':
                 if img_id > 0:  # Set the points for the real-time trajectory window
                     x, y, z = cur_t[0], cur_t[1], cur_t[2]
-                    TT.drawOpticalFlowField(imgKLT, vo.OFF_prev, vo.OFF_cur)  # Draw the features that were matched
+                    #TT.drawOpticalFlowField(imgKLT, vo.OFF_prev, vo.OFF_cur)  # Draw the features that were matched
                 else:
                     x, y, z = 0., 0., 0.
 
@@ -131,7 +132,8 @@ def run():
         sleep(0.1) # Sleep for progress bar update
         img_id += 1  # Increasing the image id
         TT.printProgress(i, len(images)-1, prefix='Progress:', suffix='Complete', barLength=50)  # update progress bar
-
+        Tf = time.time()
+        print(1 / (Tf - Tin))
     # --------------------------------------------------------------------------------
 
     # Write poses to text file in the images sequences directory
@@ -178,6 +180,7 @@ def run():
 
         else:
             TT.VO_plot(T_v)
+        
     # -------------------------------------------
 
     return
