@@ -24,7 +24,9 @@ matchDiff = 1 # Minimum distance in KLT point correspondence
 pixDiffThresh = 3 # Skip frame if pixel difference returned from KLT is less than the threshold.
 featureThresh = 1000 # Minimum number of features required per frame if the pixel difference goes below the threshold
 
-K = np.array([[7.188560000000e+02, 0.000000000000e+00, 6.071928000000e+02], [0.000000000000e+00, 7.188560000000e+02, 1.852157000000e+02], [0.000000000000e+00, 0.000000000000e+00, 1.000000000000e+00]]) # Camera Matrix of the form np.array([[f, 0, cx], [0, f, cy], [0, 0, 1]]).
+K = np.array([[7.188560000000e+02, 0.000000000000e+00, 6.071928000000e+02], 
+	      [0.000000000000e+00, 7.188560000000e+02, 1.852157000000e+02], 
+	      [0.000000000000e+00, 0.000000000000e+00, 1.000000000000e+00]]) # Camera Matrix of the form np.array([[f, 0, cx], [0, f, cy], [0, 0, 1]]).
 
 OutlierRejection = False # Outlier Removal
 
@@ -203,26 +205,17 @@ while(i <= 151):
 	Xnew = Triangulation(R0, t0, kp0, kp1, K)
 	#print(t_currR)
 	if GTLoc is not None:
-		scale1 = AbsoluteScale(groundTruthValues, i-1)
-		t_curr = t_curr + scale1 * R_curr.dot(t0)
-		R_curr = R0.dot(R_curr) 
-		#tA.append(tuple(t_currA))
-		#RA.append(tuple(R_currA))
+		scale = AbsoluteScale(groundTruthValues, i-1)
 	else:
-		scale2 = RelativeScale(Xold, Xnew)
-		t_curr = t_curr + scale1 * R_curr.dot(t0)
-		R_curr = R0.dot(R_curr)			
+		scale = RelativeScale(Xold, Xnew)
 		
-	#scale2 = RelativeScale(Xold, Xnew)
-	#t_currR = t_currR + scale2 * R_currR.dot(t0)
-	#R_currR = R0.dot(R_currR) 
-	#tR.append(tuple(t_currR))
-	#RR.append(tuple(R_currR))
-	#print(R0, t0)
+	t_curr = t_curr + scale * R_curr.dot(t0)
+	R_curr = R0.dot(R_curr)			
+
 	if kp0.shape[0] < featureThresh:
 		kp1 = FeatureDetection(img1gray, FeatureDetect)
-	#cv2.circle(canvas, (abs(t_currR[0]) + 200, abs(t_currR[2]) + 200), 2, (0,255,0), -1)
-	cv2.circle(canvas, (abs(t_curr[0]) + 200, abs(t_curr[2]) + 200), 2, (0,0,255), -1)
+
+	cv2.circle(canvas, (int(t_curr[0]) + 200, int(t_curr[2]) + 200), 2, (0,0,255), -1)
 	cv2.imshow('frame',img1)
 	cv2.imshow('canvas',canvas)
 	if cv2.waitKey(1) % 0xff == ord('q'):
