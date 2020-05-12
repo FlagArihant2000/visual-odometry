@@ -108,20 +108,14 @@ def AbsoluteScale(groundTruth, i):
 	return Enorm
 	
 def RelativeScale(last_cloud, new_cloud):
-	min_idx = min([new_cloud.shape[0], last_cloud.shape[0]])
-	ratios = []  # List to obtain all the ratios of the distances
-	for i in range(min_idx):
-		if i > 0:
-			Xk = new_cloud[i]
-			p_Xk = new_cloud[i - 1]
-			Xk_1 = last_cloud[i]
-			p_Xk_1 = last_cloud[i - 1]
+	min_idx = min([self.new_cloud.shape[0],self.last_cloud.shape[0]])
+	p_Xk = self.new_cloud[:min_idx]
+	Xk = np.roll(p_Xk,shift = -3)
+	p_Xk_1 = self.last_cloud[:min_idx]
+	Xk_1 = np.roll(p_Xk_1,shift = -3)
+	d_ratio = (np.linalg.norm(p_Xk_1 - Xk_1,axis = -1))/(np.linalg.norm(p_Xk - Xk,axis = -1))
 
-			if np.linalg.norm(p_Xk - Xk) != 0:
-				ratios.append(np.linalg.norm(p_Xk_1 - Xk_1) / np.linalg.norm(p_Xk - Xk))
-
-	d_ratio = np.median(ratios) # Take the median of ratios list as the final ratio
-	return d_ratio	
+	return np.median(d_ratio)
 	
 t = []
 R = []
