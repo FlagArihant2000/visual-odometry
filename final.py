@@ -15,8 +15,8 @@ import time
 
 
 # PARAMETERS THAT CAN BE CHANGED
-ImgLoc = '/home/arihant/visod/src/KITTI_sample/images/' # Images Location
-GTLoc = '/home/arihant/visod/src/KITTI_sample/poses.txt' # Ground truth location file. Write None if you don't have it.
+ImgLoc = '/home/arihant/visod/KITTI_sample/images/' # Images Location
+GTLoc = '/home/arihant/visod/KITTI_sample/poses.txt' # Ground truth location file. Write None if you don't have it.
 totImages = 151
 FeatureDetect = 'FAST' # FEATURE DETECTION METHOD ('FAST', 'SIFT', 'SURF', 'SHI-TOMASI')
 lk_params = dict(winSize=(21, 21), maxLevel=3, criteria=(cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 30, 0.01)) # Lucas Kanade Parameters for Optical Flow
