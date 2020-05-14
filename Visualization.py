@@ -1,3 +1,13 @@
+"""
+IvLabs, VNIT
+MONOCULAR VISUAL ODOMETRY ON KITTI DATASET
+
+TEAM MEMBERS:
+1. Arihant Gaur
+2. Saurabh Kemekar
+3. Aman Jain
+"""
+
 import numpy as np
 import cv2
 import math
