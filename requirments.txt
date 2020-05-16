@@ -1,0 +1,5 @@
+Python 3.7 or any higher version 
+Opencv 3.4 
+Opencv_contrib ( if using SIFT or SURF as feature deetector)
+os,Numpy module 
+Matplotlib
