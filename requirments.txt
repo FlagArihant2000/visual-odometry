@@ -1,5 +1,3 @@
-Python 3.7 or any higher version 
-Opencv 3.4 
-Opencv_contrib ( if using SIFT or SURF as feature deetector)
-os,Numpy module 
-Matplotlib
+numpy==1.18.4
+opencv-python==3.4.2
+matplotlib==3.0.3
