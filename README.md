@@ -16,6 +16,8 @@ The project aims at understanding the working of visual odometry. An odometer is
 10. Plot the updated final translation component (x and z component).
 11. Repeat step 6 to 10 till the video sequence is exhausted.
 
+### Compile and Run:
+`git clone https://github.com/FlagArihant2000/visual-odometry`
 ### Team Members:
 
 1. Arihant Gaur
