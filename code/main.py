@@ -19,7 +19,7 @@ from features import *
 
 # PARAMETERS THAT CAN BE CHANGED
 #ImgLoc = '/home/saurabh/Downloads/visual-odometry-master/KITTI_sample/images/'
-ImgLoc = '/home/arihant/visod/KITTI_sample/images/'
+ImgLoc = '/KITTI_sample/images/'
  # Images Location
 GTLoc = False
 totImages = len(os.listdir(ImgLoc))
@@ -74,7 +74,7 @@ R.append(tuple(np.zeros((3,3))))
 i = 1
 if GTLoc:
 	#ground_truth = np.loadtxt('/home/saurabh/Downloads/visual-odometry-master/KITTI_sample/poses.txt')
-	ground_truth = np.loadtxt('/home/arihant/visod/KITTI_sample/poses.txt')	
+	ground_truth = np.loadtxt('/KITTI_sample/poses.txt')	
 		
 while(1):
 	img0 = cv2.imread(ImgLoc+str(i)+'.png') # First frame acquisition
