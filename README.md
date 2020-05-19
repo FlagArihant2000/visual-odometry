@@ -19,8 +19,8 @@ The project aims at understanding the working of visual odometry. An odometer is
 ### Compile and Run:
 1. ```git clone https://github.com/FlagArihant2000/visual-odometry```
 2. ```cd .../visual-odometry/code/```
-3. One can run ```python3 main.py``` directly, or can access the source file ```main.py``` and change the parameters.
-4. A Tkinter interface will ask for the input directory of the dataset images that you are using. You may change ```GTLoc = False``` if you do not have its ground truth values, else let it remain ```True```. The variable ```K``` following later consists of the intrinsic camera matrix for your dataset, which might have been provided in the dataset.
+3. One can run ```python3 main.py``` directly, or can access the source file ```main.py``` and change the parameters in accordance with the dataset used.
+4. A Tkinter interface will ask for the input directory of the dataset images that you are using. You may change ```GTLoc = False``` if you do not have its ground truth values, else let it remain ```True```. The variable ```K``` is the intrinsic camera matrix for the dataset, which might have been provided in the dataset.
 5. If one chooses to use their own dataset, one can record a video sequence, convert each frame in .png format. For calibrating your camera, one can use ```Camera_calibration.py``` file.
 
 ### Team Members:
