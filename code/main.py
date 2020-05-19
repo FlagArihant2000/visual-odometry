@@ -14,15 +14,22 @@ import numpy as np
 import matplotlib.pyplot as plt
 import time
 import os
+from tkinter import filedialog
 from  Visualization import *
 from features import *
 
 # PARAMETERS THAT CAN BE CHANGED
 #ImgLoc = '/home/saurabh/Downloads/visual-odometry-master/KITTI_sample/images/'
-ImgLoc = '/KITTI_sample/images/'
+#print(os.getcwd().strip('code'))
+
+print('SELECT DATASET DIRECTORY')
+ImgLoc = filedialog.askdirectory() + '/'
+#print(ImgLoc)
  # Images Location
 GTLoc = False
+
 totImages = len(os.listdir(ImgLoc))
+print(totImages)
 FeatureDetect = 'FAST' # FEATURE DETECTION METHOD ('FAST', 'SIFT' and 'SURF')
  # Lucas Kanade Parameters for Optical Flow
 
@@ -74,7 +81,9 @@ R.append(tuple(np.zeros((3,3))))
 i = 1
 if GTLoc:
 	#ground_truth = np.loadtxt('/home/saurabh/Downloads/visual-odometry-master/KITTI_sample/poses.txt')
-	ground_truth = np.loadtxt('/KITTI_sample/poses.txt')	
+	print('SELECT GROUND TRUTH VALUES TEXT FILE (pose.txt)')
+	gtdir = filedialog.askopenfilename()
+	ground_truth = np.loadtxt(gtdir)
 		
 while(1):
 	img0 = cv2.imread(ImgLoc+str(i)+'.png') # First frame acquisition
@@ -82,14 +91,14 @@ while(1):
 #	img0gray = clahe.apply(img0gray)
 	# FEATURE DETECTION
 	kp0 = FeatureDetection(img0gray, FeatureDetect)
-	print(len(kp0))	
+
 	
 	img1 = cv2.imread(ImgLoc+str(i+1)+'.png') # Second frame acquisition
 	img1gray = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
 #	img1gray = clahe.apply(img1gray)
 	# FEATURE TRACKING
 	kp0, kp1, diff = FeatureTracking(img0gray, img1gray, kp0)
-	print(diff)
+
 	if diff < pixDiffThresh: # If pixel difference is not sufficient (almost no motion)
 		i = i + 1
 	else:
@@ -144,9 +153,9 @@ while(i <= totImages):
 	Xnew = Triangulation(R0, t0, kp0, kp1, K)
 	#print(t_currR)
 	if GTLoc:
-		print('ground_truth')
+		#print('ground_truth')
 		scale = - AbsoluteScale(ground_truth,i-2,i-1)
-		plot_ground_truth(canvas,i-1,ground_truth[i,3]+a,ground_truth[i,11] + b)
+		plot_ground_truth(canvas, i-1, ground_truth[i-1,3] + a, ground_truth[i-1,11] + b)
 	else:
 		scale = RelativeScale(Xold, Xnew)
 
@@ -156,16 +165,18 @@ while(i <= totImages):
 	if kp0.shape[0] < featureThresh:
 		kp1 = FeatureDetection(img1gray, FeatureDetect)
 	
-	canvas = plot_trajectory(canvas,i,int(t_curr[0]) +  a, int(t_curr[2])+b,t_curr,GTLoc)
+	canvas = plot_trajectory(canvas, i, int(t_curr[0]) +  a, int(t_curr[2])+b,t_curr, GTLoc)
 	cv2.imshow('canvas',canvas)
 	cv2.imshow('img',img1)
 
-	if cv2.waitKey(1) % 0xff == ord('q'):
+	if cv2.waitKey(1) & 0xff == ord('q'):
 		break
 	i = i + 1
 	Tf = time.time()
-	print(1/(Tf - Ti))
+	print('FPS: ',1/(Tf - Ti))
 
+cv2.destroyAllWindows()
+cv2.imshow('canvas',canvas)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
 	
