@@ -56,14 +56,15 @@ def plot_trajectory(window,i,x,y,t,GTLoc):
  
     cv2.rectangle(window, (0, 0), (950, 70), (0, 0, 0), cv2.FILLED)
     cv2.putText(window, text, (10, 50), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, 8);
-    cv2.circle(window,(int(x),int(y)),3,(0,255,0))
+    cv2.circle(window,(int(x),700 - int(y)),3,(0,255,0))
+    
 
     return window
 
 
 def plot_ground_truth(window,i,x,z):
     cv2.putText(window, 'Ground_truth', (10, 90), cv2.FONT_HERSHEY_PLAIN, 1.5, (0, 0, 255), 2, 8)
-    cv2.circle(window, (int(x), int(z)), 3, (0, 0, 255))
+    cv2.circle(window, (int(x), 700 - int(z)), 3, (0, 0, 255))
     return window
 
 

@@ -157,7 +157,7 @@ while(i <= totImages):
 		scale = - AbsoluteScale(ground_truth,i-2,i-1)
 		plot_ground_truth(canvas, i-1, ground_truth[i-1,3] + a, ground_truth[i-1,11] + b)
 	else:
-		scale = RelativeScale(Xold, Xnew)
+		scale = - RelativeScale(Xold, Xnew)
 
 	t_curr = t_curr + scale * R_curr.dot(t0)
 	R_curr = R_curr.dot(R0)			
